@@ -18,6 +18,11 @@ pub fn get_implementation(env: &Env) -> Option<Address> {
     env.storage().instance().get(&symbol_short!("impl"))
 }
 
+/// Upgrades the contract implementation.
+///
+/// This function deliberately does NOT check `when_not_paused` — a contract
+/// upgrade may be the only way to fix a bug that caused the pause state,
+/// so the admin must be able to upgrade even while paused.
 pub fn set_implementation(
     env: &Env,
     admin: &Address,

@@ -29,6 +29,9 @@ pub fn is_paused(env: &Env) -> bool {
 
 pub fn pause(env: &Env, admin: &Address) -> Result<(), PauseError> {
     admin.require_auth();
+    if is_paused(env) {
+        return Ok(()); // Idempotent: already paused, no-op.
+    }
     env.storage()
         .instance()
         .set(&symbol_short!("paused"), &true);
@@ -38,6 +41,9 @@ pub fn pause(env: &Env, admin: &Address) -> Result<(), PauseError> {
 
 pub fn unpause(env: &Env, admin: &Address) -> Result<(), PauseError> {
     admin.require_auth();
+    if !is_paused(env) {
+        return Ok(()); // Idempotent: already unpaused, no-op.
+    }
     env.storage()
         .instance()
         .set(&symbol_short!("paused"), &false);
